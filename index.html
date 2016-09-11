@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <link rel="stylesheet" href="style.css?v=1">
+  </head>
+
+  <body>
+    <h2 class="page-heading"> Canvas O/P Testing </h2>
+
+    <h3 class="page-title">Why are we doing this?</h3>
+    <p class="page-content">
+      Since the content of the canvas is inaccessible, it is important to
+      ensure that the content can be explained in some way. To do this, we
+      added a textual counterpart to every object drawn on the canvas.
+    </p>
+    <p class="page-content">
+      The output contains a summary which is a gist of what is present in the
+      canvas along with a table that contains details of objects. Both summary
+      and table update in realtime with the sketch.
+      NOTE: The output is currently visible - however this will not be the
+      case in the IDE. This is just temporary for also testing without a
+      screenreader.
+    </p>
+
+    <h3 class="page-title">Implementation</h3>
+    <p class="page-content">
+      The implementation to get the data for the p5 objects is done using an
+      interceptor/monkey patch. The patch gets the arguments from the function
+      call and store it in a variable.
+      This content (summary and details) is refreshed every 100 frames - it
+      contains the approximate location of the object along with its colour and
+      other attributes.
+    </p>
+
+    <a class="github-link" target="_blank" href="https://github.com/MathuraMG/monkeyPatchTest/tree/gh-pages">
+      Source code
+    </a>
+
+    <h3 class="page-title">Examples</h3>
+    <a class="page-link" href="examples/example1.html">Shapes on a canvas
+      <img class="image-link" src="assets/img1.png"></img>
+    </a>
+    <a class="page-link" href="examples/example2.html">Shapes and text on a canvas
+      <img class="image-link" src="assets/img2.png"></img>
+    </a>
+    <a class="page-link" href="examples/example3.html">Moving shape
+      <img class="image-link" src="assets/img3.png"></img>
+    </a>
+    <a class="page-link" href="examples/example4.html">On click bouncing ball (click on the canvas)
+      <img class="image-link" src="assets/img4.png"></img>
+    </a>
+
+</html>

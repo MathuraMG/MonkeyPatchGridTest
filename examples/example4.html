@@ -1,0 +1,114 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <script src="../data.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/stacktrace.js/1.0.0/stacktrace.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/p5.js/0.5.2/p5.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/p5.js/0.5.2/addons/p5.dom.min.js"></script>
+    <script type="text/javascript" src="http://chir.ag/projects/ntc/ntc.js"></script>
+    <script src="../interceptor-functions.js"></script>
+    <script src="../intercept-p5.js"></script>
+    <link rel="stylesheet" href="../style.css">
+    
+  </head>
+
+  <body>
+    <div id="canvas-sub"></div>
+    <script>
+    var ballCount = 0 ;
+    var gameCount = 0;
+    var maxX = 500;
+    var maxY = 500;
+    var balls = [];
+    var gravity = 0.5;
+    var elly =400;
+
+
+    function setup() {
+    createCanvas(500, 500);
+    }
+
+    function draw() {
+    //The screen
+    background(128);
+    fill(255);
+    if(frameCount<1000||frameCount>1300){
+        text(frameCount,20,20);
+    }
+
+
+    // The bouncing balls
+    for(var i =0;i<balls.length;i++)
+    {
+      balls[i].displayBall();
+    }
+    }
+
+    function mousePressed()
+    {
+
+    if(mouseY< elly -100)
+    {
+      var i = balls.length;
+      var xspeed =  random(-4,3);
+      var r = round(random(0,1))*255;
+      var g = round(random(0,1))*255;
+      var b = round(random(0,1))*255;
+      balls[i] = new ball(mouseX,mouseY,xspeed,8,r,g,b);
+      ballCount++;
+    }
+
+    }
+
+    function ball(xPos,yPos,xspeed,yspeed,r,g,b)
+    {
+    this.xPos= xPos;
+    this.yPos= yPos;
+    this.yspeed= yspeed;
+    this.xspeed= xspeed;
+    this.isDown = 1;
+
+    this.displayBall = function() {
+
+      //Display the ball
+      fill(r,g,b);
+      noStroke();
+      ellipse(this.xPos, this.yPos, 25, 25);
+
+      //Move the ball
+      this.yPos = this.yPos + this.yspeed;
+      this.xPos = this.xPos + this.xspeed;
+      this.yspeed = this.yspeed + gravity;
+
+
+
+    //Bounce the ball
+      if (this.yPos > maxY) {
+        this.yPos = maxY;
+        //println("GO BACK GO BACK!");
+        this.isDown = 0;
+        this.yspeed = this.yspeed * -0.8;
+       // println(abs(this.yspeed));
+      }
+      if (this.xPos > maxX) {
+        this.xPos = maxX;
+        //println("GO LEFT!");
+        this.xspeed = this.xspeed * -0.8;
+      }
+      if (this.xPos < 0) {
+        this.xPos = 0;
+        //println("GO LEFT!");
+        this.xspeed = this.xspeed * -0.8;
+      }
+      if(abs(this.yspeed) <3.5 && this.yPos>495)
+      {
+        this.yspeed = 0;
+        this.xspeed = 0;
+      }
+    }
+    }
+
+
+    </script>
+  </body>
+</html>
