@@ -162,37 +162,9 @@ var Interceptor = {
       }
     }
 
-    if(x<=0.2*canvasX) {
-      locX = 0;
-    }
-    else if(x<=0.4*canvasX) {
-      locX = 1;
-    }
-    else if(x<=0.6*canvasX) {
-      locX = 2;
-    }
-    else if(x<=0.8*canvasX) {
-      locX = 3;
-    }
-    else {
-      locX = 4;
-    }
+    locX = Math.floor((x/canvasX)*5)
+    locY = Math.floor((y/canvasY)*5)
 
-    if(x<=0.2*canvasY) {
-      locY = 0;
-    }
-    else if(x<=0.4*canvasY) {
-      locY = 1;
-    }
-    else if(x<=0.6*canvasY) {
-      locY = 2;
-    }
-    else if(x<=0.8*canvasY) {
-      locY = 3;
-    }
-    else {
-      locY = 4;
-    }
 
     return({
       locX: locX,
