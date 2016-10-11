@@ -1,6 +1,6 @@
 body {
   font-family: 'Helvetica';
-  background: #fbf0e0;
+  background: #fff;
   font-weight: 100;
   padding: 10px;
 }
@@ -27,7 +27,7 @@ body {
 }
 
 .page-link:hover {
-  color: #a74000;
+  color: #ed225d;
 }
 
 .page-content {
@@ -68,5 +68,9 @@ tr, td, th{
 }
 
 .source-link:hover {
-  color: #a74000;
+  color: #ed225d;
+}
+
+li {
+  list-style: none;
 }
