@@ -67,8 +67,8 @@ var Interceptor = {
     objectTypeCount : {}
   },
   isCleared : false,
-  noRows: 5,
-  noCols: 5,
+  noRows: 10,
+  noCols: 10,
   createShadowDOMElement : function() {
 
     // var c = document.getElementsByTagName('canvas')[0];
@@ -162,8 +162,8 @@ var Interceptor = {
       }
     }
 
-    locX = Math.floor((x/canvasX)*5)
-    locY = Math.floor((y/canvasY)*5)
+    locX = Math.floor((x/canvasX)*this.noRows)
+    locY = Math.floor((y/canvasY)*this.noCols)
 
 
     return({

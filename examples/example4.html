@@ -1,6 +1,7 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
   <head>
+    <title> Example Canvas Output </title>
     <script src="../data.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/stacktrace.js/1.0.0/stacktrace.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/p5.js/0.5.2/p5.js"></script>
@@ -9,10 +10,11 @@
     <script src="../interceptor-functions.js"></script>
     <script src="../intercept-p5.js"></script>
     <link rel="stylesheet" href="../style.css">
-    
+
   </head>
 
   <body>
+    <h2> Text-Based Output </h2>
     <div id="canvas-sub"></div>
     <script>
     var ballCount = 0 ;
@@ -32,10 +34,6 @@
     //The screen
     background(128);
     fill(255);
-    if(frameCount<1000||frameCount>1300){
-        text(frameCount,20,20);
-    }
-
 
     // The bouncing balls
     for(var i =0;i<balls.length;i++)

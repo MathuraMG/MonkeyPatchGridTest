@@ -1,9 +1,6 @@
 var shadowDOMElement;
 var canvasLocation ='';
 
-//for object in setpu (??)
-
-
 funcNames = refData["classitems"].map(function(x){
   return {
     name: x["name"],
@@ -34,18 +31,16 @@ funcNames.forEach(function(x){
       Interceptor.populateTable(table,Interceptor.setupObject);
     }
 
-    else if(frameCount%100 == 0 ) {
+    else if(frameCount%50 == 0 ) {
       Interceptor.drawObject = Interceptor.populateObject(x,arguments, Interceptor.drawObject, document.getElementById('shadowDOM-content-details'),true);
 
       Interceptor.isCleared = false;
     }
     //reset some of the variables
-    else if(frameCount%100 == 1 ) {
+    else if(frameCount%50 == 1 ) {
       if(!Interceptor.isCleared){
         var cells = document.getElementsByClassName('shadowDOM-cell-content');
-        console.log(cells);
         for( i =0;i<cells.length;i++) {
-          console.log('making blan');
           cells[i].innerHTML = '';
         }
         var table = document.getElementById('shadowDOM-content-details');
