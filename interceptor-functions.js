@@ -71,6 +71,7 @@ var Interceptor = {
   isCleared : false,
   noRows: 10,
   noCols: 10,
+  coordLoc : {},
 
   createShadowDOMElement : function() {
 
@@ -151,6 +152,57 @@ var Interceptor = {
     }
   },
 
+  canvasLocator1 : function(arguments,canvasX,canvasY){
+    var x,y;
+    var isNum1 = false;
+    var isNum2 = false;
+    for(var i=0;i<arguments.length;i++) {
+      a = arguments[i];
+      if(!isNum1 && !isNum2 && !(typeof(a)).localeCompare('number')) {
+        x = a;
+        isNum1 = true;
+      } else if (isNum1 && !isNum2 && !(typeof(a)).localeCompare('number')) {
+        y = a;
+        isNum2 = true;
+      }
+    }
+
+    if(x<0.4*canvasX) {
+      if(y<0.4*canvasY) {
+        return 'top left';
+      }
+      else if(y>0.6*canvasY) {
+        return 'bottom left';
+      }
+      else {
+        return 'mid left';
+      }
+    }
+    else if(x>0.6*canvasX) {
+      if(y<0.4*canvasY) {
+        return 'top right';
+      }
+      else if(y>0.6*canvasY) {
+        return 'bottom right';
+      }
+      else {
+        return 'mid right';
+      }
+    }
+    else {
+      if(y<0.4*canvasY) {
+        return 'top middle';
+      }
+      else if(y>0.6*canvasY) {
+        return 'bottom middle';
+      }
+      else {
+        return 'middle';
+      }
+    }
+  },
+
+
   canvasLocator : function(arguments,canvasX,canvasY){
     var x, y;
     var locX, locY;
@@ -205,14 +257,14 @@ var Interceptor = {
     }
     else if(!x.module.localeCompare('Shape') || !x.module.localeCompare('Typography') &&((!x.submodule)||(x.submodule.localeCompare('Attributes')!=0)) ){
       this.objectArea = this.getObjectArea(x.name, arguments);
-      var canvasLocation = this.canvasLocator(arguments ,width,height);
-      console.log(canvasLocation);
+      var canvasLocation = this.canvasLocator1(arguments ,width,height);
+      this.coordLoc = this.canvasLocator(arguments,width,height);
       objectArray[objectCount] = {
-        'type' : x.name,
-        'location': canvasLocation,
-        'colour': this.currentColor,
-        'area': this.objectArea,
-        'coord': this.coordinates
+        'type' : this.currentColor + ' ' + x.name ,
+        'location': canvasLocation, //top left vs top right etc
+        'coordLoc': this.coordLoc, // 3,3 vs 5,3 etc
+        'area':  +this.objectArea,
+        'co-ordinates': this.coordinates // coordinates of where the objects are drawn
       };
       this.coordinates = [];
       //add the object(shape/text) parameters in objectArray
@@ -251,10 +303,10 @@ var Interceptor = {
   populateTable : function(table, objectArray) {
     if(this.totalCount<100) {
       for(var i=0;i<objectArray.length;i++) {
-        var cellLoc = objectArray[i].location.locY*this.noRows + objectArray[i].location.locX;
+        var cellLoc = objectArray[i].coordLoc.locY*this.noRows + objectArray[i].coordLoc.locX;
         //add link in table
         var cellLink = document.createElement('a');
-        cellLink.innerHTML += objectArray[i].colour + ' ' + objectArray[i].type;
+        cellLink.innerHTML += objectArray[i].type;
         var objectId = '#object'+i;
         cellLink.setAttribute('href',objectId);
         document.getElementsByClassName('shadowDOM-cell-content')[cellLoc].appendChild(cellLink);
@@ -323,7 +375,11 @@ var Interceptor = {
           objectList.appendChild(objectListItem);
           var objKeys = Object.keys(object1.objectArray[i]);
           for(var j=0;j<objKeys.length;j++) {
-            objectListItem.innerHTML += objKeys[j] + ' is ' + object1.objectArray[i][objKeys[j]] + ' ';
+            if(objKeys[j].localeCompare('coordLoc'))
+            {
+              objectListItem.innerHTML += objKeys[j] + ' is ' + object1.objectArray[i][objKeys[j]] + ' ';
+            }
+
           }
         }
         for(var i=0; i <object2.objectArray.length; i++) {
@@ -332,7 +388,10 @@ var Interceptor = {
           objectList.appendChild(objectListItem);
           var objKeys = Object.keys(object2.objectArray[i]);
           for(var j=0;j<objKeys.length;j++) {
-            objectListItem.innerHTML += objKeys[j] + ' is ' + object2.objectArray[i][objKeys[j]] + ' ';
+            if(objKeys[j].localeCompare('coordLoc'))
+            {
+              objectListItem.innerHTML += objKeys[j] + ' is ' + object2.objectArray[i][objKeys[j]] + ' ';
+            }
           }
         }
         elementDetail.appendChild(objectList);
