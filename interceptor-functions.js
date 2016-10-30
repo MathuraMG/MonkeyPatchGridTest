@@ -52,6 +52,7 @@ var Interceptor = {
   totalCount : 0,
   currentColor : 'white',
   objectArea : 0,
+  objectDescription : '',
   bgColor : 'white',
   coordinates : [],
   canvasDetails : {
@@ -259,14 +260,22 @@ var Interceptor = {
       this.objectArea = this.getObjectArea(x.name, arguments);
       var canvasLocation = this.canvasLocator1(arguments ,width,height);
       this.coordLoc = this.canvasLocator(arguments,width,height);
+      if(x.name.localeCompare('text')){
+        this.objectDescription = x.name;
+      }
+      else {
+        this.objectDescription = arguments[0].substring(0,20);
+      }
       objectArray[objectCount] = {
-        'type' : this.currentColor + ' ' + x.name ,
+        'type' : this.currentColor + ' - ' + this.objectDescription ,
         'location': canvasLocation, //top left vs top right etc
         'coordLoc': this.coordLoc, // 3,3 vs 5,3 etc
-        'area':  +this.objectArea,
+        'area': this.objectArea,
         'co-ordinates': this.coordinates // coordinates of where the objects are drawn
       };
       this.coordinates = [];
+
+
       //add the object(shape/text) parameters in objectArray
       for(var i=0;i<arguments.length;i++) {
         if(!(typeof(arguments[i])).localeCompare('number')){
@@ -348,15 +357,14 @@ var Interceptor = {
     this.totalCount = object1.objectCount + object2.objectCount;
     elementSummary.innerHTML = '';
     elementDetail.innerHTML = '';
-    elementSummary.innerHTML += 'Canvas size is ' + this.canvasDetails.width + ' by ' + this.canvasDetails.height + ' pixels ';
-    elementSummary.innerHTML += ' and has a background colour of ' + this.bgColor + '. ';
-    elementSummary.innerHTML += 'This canvas contains ' + this.totalCount;
+    elementSummary.innerHTML +=  this.bgColor + ' canvas is ' + this.canvasDetails.width + ' by ' + this.canvasDetails.height + ' of area ' + this.canvasDetails.width*this.canvasDetails.height;
     if(this.totalCount > 1 ) {
-      elementSummary.innerHTML += ' objects. The objects are ';
+      elementSummary.innerHTML += ' Contains ' + this.totalCount + ' objects - ';
     }
     else {
-      elementSummary.innerHTML += ' object. The object is ';
+      elementSummary.innerHTML += ' Contains ' + this.totalCount + ' object - ';
     }
+
 
     if(object2.objectCount>0 || object1.objectCount>0 ) {
 
@@ -377,7 +385,12 @@ var Interceptor = {
           for(var j=0;j<objKeys.length;j++) {
             if(objKeys[j].localeCompare('coordLoc'))
             {
-              objectListItem.innerHTML += objKeys[j] + ' is ' + object1.objectArray[i][objKeys[j]] + ' ';
+              if(objKeys[j].localeCompare('type')){
+                objectListItem.innerHTML += objKeys[j] + ' = ' + object1.objectArray[i][objKeys[j]] + ' ';
+              }
+              else {
+                objectListItem.innerHTML += object1.objectArray[i][objKeys[j]] + ' ';
+              }
             }
 
           }
@@ -390,7 +403,12 @@ var Interceptor = {
           for(var j=0;j<objKeys.length;j++) {
             if(objKeys[j].localeCompare('coordLoc'))
             {
-              objectListItem.innerHTML += objKeys[j] + ' is ' + object2.objectArray[i][objKeys[j]] + ' ';
+              if(objKeys[j].localeCompare('type')){
+                objectListItem.innerHTML += objKeys[j] + ' = ' + object2.objectArray[i][objKeys[j]] + ' ';
+              }
+              else {
+                objectListItem.innerHTML += object2.objectArray[i][objKeys[j]] + ' ';
+              }
             }
           }
         }
