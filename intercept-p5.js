@@ -26,7 +26,7 @@ funcNames.forEach(function(x){
     }
     if(frameCount == 0) { //for setup
       Interceptor.setupObject = Interceptor.populateObject(x,arguments, Interceptor.setupObject,  document.getElementById('shadowDOM-content-details'),false);
-      Interceptor.getObjectDetails(Interceptor.setupObject,Interceptor.drawObject,document.getElementById('shadowDOM-content-summary'),document.getElementById('shadowDOM-content-details'));
+      Interceptor.populateObjectDetails(Interceptor.setupObject,Interceptor.drawObject,document.getElementById('shadowDOM-content-summary'),document.getElementById('shadowDOM-content-details'));
       var table = document.getElementById('shadowDOM-content-details');
       Interceptor.populateTable(table,Interceptor.setupObject);
     }
@@ -44,7 +44,7 @@ funcNames.forEach(function(x){
           cells[i].innerHTML = '';
         }
         var table = document.getElementById('shadowDOM-content-details');
-        Interceptor.getObjectDetails(Interceptor.setupObject,Interceptor.drawObject,document.getElementById('shadowDOM-content-summary'),document.getElementById('shadowDOM-content-details'));
+        Interceptor.populateObjectDetails(Interceptor.setupObject,Interceptor.drawObject,document.getElementById('shadowDOM-content-summary'),document.getElementById('shadowDOM-content-details'));
         Interceptor.populateTable(table,Interceptor.setupObject.objectArray.concat(Interceptor.drawObject.objectArray));
       }
       Interceptor.drawObject = Interceptor.clearVariables(Interceptor.drawObject);

@@ -1,52 +1,3 @@
-String.prototype.paddingLeft = function (paddingValue) {
-   return String(paddingValue + this).slice(-paddingValue.length);
-};
-
-function MergeObjRecursive(obj1, obj2) {
-  var obj3 = {};
-  for(p in obj1) {
-    obj3[p] = obj1[p];
-  }
-  for(p in obj2) {
-    if(Object.keys(obj3).indexOf(p)<0){
-      obj3[p] = obj2[p];
-    }
-    else {
-      obj3[p] = obj3[p] + obj2[p];
-    }
-  }
-  return obj3;
-}
-
-if(Array.prototype.equals)
-// attach the .equals method to Array's prototype to call it on any array
-Array.prototype.equals = function (array) {
-    // if the other array is a falsy value, return
-    if (!array)
-        return false;
-
-    // compare lengths - can save a lot of time
-    if (this.length != array.length)
-        return false;
-
-    for (var i = 0, l=this.length; i < l; i++) {
-        // Check if we have nested arrays
-        if (this[i] instanceof Array && array[i] instanceof Array) {
-            // recurse into the nested arrays
-            if (!this[i].equals(array[i]))
-                return false;
-        }
-        else if (this[i] != array[i]) {
-            // Warning - two different object instances will never be equal: {x:20} != {x:20}
-            return false;
-        }
-    }
-    return true;
-}
-// Hide method from for-in loops
-Object.defineProperty(Array.prototype, "equals", {enumerable: false});
-
-
 var Interceptor = {
   prevTotalCount :0,
   totalCount : 0,
@@ -74,6 +25,7 @@ var Interceptor = {
   noCols: 10,
   coordLoc : {},
 
+  /* creates the DOM space so that all the contet can be fit into it */
   createShadowDOMElement : function() {
 
     // var c = document.getElementsByTagName('canvas')[0];
@@ -120,6 +72,7 @@ var Interceptor = {
     section.appendChild(details);
   },
 
+  /* uses an external library - ntc - to get the colours given the hex value. Currently done only for RGB */
   getColorName : function(arguments) {
     if(arguments.length==3) {
       //assuming that we are doing RGB - convert RGB values to a name
@@ -153,7 +106,8 @@ var Interceptor = {
     }
   },
 
-  canvasLocator1 : function(arguments,canvasX,canvasY){
+  /* return which part of the canvas an object os present */
+  canvasAreaLocation : function(arguments,canvasX,canvasY){
     var x,y;
     var isNum1 = false;
     var isNum2 = false;
@@ -203,27 +157,28 @@ var Interceptor = {
     }
   },
 
-
-  canvasLocator : function(arguments,canvasX,canvasY){
-    var x, y;
+  /* return which part of the canvas an object os present */
+  canvasLocator : function(x,arguments,canvasX,canvasY){
+    var x_loc, y_loc;
     var locX, locY;
-    var isNum1 = false;
-    var isNum2 = false;
     for(var i=0;i<arguments.length;i++) {
       a = arguments[i];
-      if(!isNum1 && !isNum2 && !(typeof(a)).localeCompare('number')) {
-        x = a;
-        isNum1 = true;
-      } else if (isNum1 && !isNum2 && !(typeof(a)).localeCompare('number')) {
-        y = a;
-        isNum2 = true;
+      if(x.params[i].description.indexOf("x-coordinate")>-1) {
+        x_loc = a;
+      }
+      else if(x.params[i].description.indexOf("y-coordinate")>-1) {
+        y_loc = a;
       }
     }
 
-    locX = Math.floor((x/canvasX)*this.noRows)
-    locY = Math.floor((y/canvasY)*this.noCols)
-
-
+    locX = Math.floor((x_loc/canvasX)*this.noRows);
+    locY = Math.floor((y_loc/canvasY)*this.noCols);
+    if( locX == this.noRows) {
+      locX = locX - 1;
+    }
+    if( locY == this.noCols) {
+      locY = locY - 1;
+    }
     return({
       locX: locX,
       locY: locY
@@ -231,6 +186,7 @@ var Interceptor = {
 
   },
 
+  /* reset variables and parameters */
   clearVariables : function(object) {
     object.objectTypeCount = {};
     object.objectCount = 0;
@@ -238,6 +194,7 @@ var Interceptor = {
     return object;
   },
 
+  /* populate the objects with values from setup and draw */
   populateObject : function(x,arguments, object ,table, isDraw) {
     objectCount = object.objectCount;
     objectArray = object.objectArray;
@@ -249,17 +206,25 @@ var Interceptor = {
         this.canvasDetails.height = arguments[1];
       }
     }
-    //check for speacial functions in general -> background/fill
+    /* Here - most of the functions are generalised, but some need specific outputs */
+
+    /* for `fill` function */
     if(!x.name.localeCompare('fill')) {
       this.currentColor = this.getColorName(arguments);
     }
+
+    /* for `background` function */
     else if(!x.name.localeCompare('background')) {
       this.bgColor = this.getColorName(arguments);
     }
+
+    /* for 2D functions and text function */
     else if(!x.module.localeCompare('Shape') || !x.module.localeCompare('Typography') &&((!x.submodule)||(x.submodule.localeCompare('Attributes')!=0)) ){
       this.objectArea = this.getObjectArea(x.name, arguments);
-      var canvasLocation = this.canvasLocator1(arguments ,width,height);
-      this.coordLoc = this.canvasLocator(arguments,width,height);
+      var canvasLocation = this.canvasAreaLocation(arguments ,width,height);
+      this.coordLoc = this.canvasLocator(x,arguments,width,height);
+
+      /* in case of text, the description should be what is in the content */
       if(x.name.localeCompare('text')){
         this.objectDescription = x.name;
       }
@@ -276,7 +241,7 @@ var Interceptor = {
       this.coordinates = [];
 
 
-      //add the object(shape/text) parameters in objectArray
+      /*add the object(shape/text) parameters in objectArray */
       for(var i=0;i<arguments.length;i++) {
         if(!(typeof(arguments[i])).localeCompare('number')){
           arguments[i] = round(arguments[i]);
@@ -298,8 +263,6 @@ var Interceptor = {
       else {
         objectTypeCount[x.name]=1;
       }
-      //creating the table to contain the object(shape/text) details
-
       objectCount++;
     }
     return ({
@@ -309,6 +272,7 @@ var Interceptor = {
     });
   },
 
+  /* populate the grid table with links */
   populateTable : function(table, objectArray) {
     if(this.totalCount<100) {
       for(var i=0;i<objectArray.length;i++) {
@@ -323,6 +287,7 @@ var Interceptor = {
     }
   },
 
+  /* helper function to get object area */
   getObjectArea : function(objectType,arguments){
     var objectArea = 0;
     if(!objectType.localeCompare('arc')) {
@@ -352,7 +317,8 @@ var Interceptor = {
     return objectArea;
   },
 
-  getObjectDetails : function(object1, object2, elementSummary, elementDetail) {
+  /* helper function to populate object Details */
+  populateObjectDetails : function(object1, object2, elementSummary, elementDetail) {
     this.prevTotalCount = this.totalCount;
     this.totalCount = object1.objectCount + object2.objectCount;
     elementSummary.innerHTML = '';

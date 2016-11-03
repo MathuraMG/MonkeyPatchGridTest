@@ -7,6 +7,7 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/p5.js/0.5.2/p5.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/p5.js/0.5.2/addons/p5.dom.min.js"></script>
     <script type="text/javascript" src="http://chir.ag/projects/ntc/ntc.js"></script>
+    <script src="../intercept-helper-functions.js"></script>
     <script src="../interceptor-functions.js"></script>
     <script src="../intercept-p5.js"></script>
     <link rel="stylesheet" href="../style.css">
@@ -20,13 +21,12 @@
         Heading = createElement('h2','Example 1 - Shapes on canvas');
         canvas = createCanvas(400, 400);
         canvas.attribute('title','grey canvas with multiple shapes - a red circle, green square and blue triangle');
-        
+        fill(255, 0, 0);
+        ellipse(40, 50, 80, 80);
       }
 
       function draw() {
         background(220);
-          fill(255, 0, 0);
-          ellipse(80, 50, 80, 80);
         fill(0, 255, 0);
         rect(150, 100, 50, 50);
         fill(0, 0, 255);
