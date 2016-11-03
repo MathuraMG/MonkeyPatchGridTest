@@ -76,6 +76,7 @@ var Interceptor = {
   getColorName : function(arguments) {
     if(arguments.length==3) {
       //assuming that we are doing RGB - convert RGB values to a name
+      console.log(arguments[0].toString(16));
       var color = '#' + arguments[0].toString(16).paddingLeft("00") + arguments[1].toString(16).paddingLeft("00") + arguments[2].toString(16).paddingLeft("00");
       var n_match  = ntc.name(color);
       return n_match[1];
@@ -107,37 +108,36 @@ var Interceptor = {
   },
 
   /* return which part of the canvas an object os present */
-  canvasAreaLocation : function(arguments,canvasX,canvasY){
-    var x,y;
-    var isNum1 = false;
-    var isNum2 = false;
+  canvasAreaLocation : function(x,arguments,canvasX,canvasY){
+
+    var x_loc,y_loc;
+
     for(var i=0;i<arguments.length;i++) {
       a = arguments[i];
-      if(!isNum1 && !isNum2 && !(typeof(a)).localeCompare('number')) {
-        x = a;
-        isNum1 = true;
-      } else if (isNum1 && !isNum2 && !(typeof(a)).localeCompare('number')) {
-        y = a;
-        isNum2 = true;
+      if(x.params[i].description.indexOf("x-coordinate")>-1) {
+        x_loc = a;
+      }
+      else if(x.params[i].description.indexOf("y-coordinate")>-1) {
+        y_loc = a;
       }
     }
 
-    if(x<0.4*canvasX) {
-      if(y<0.4*canvasY) {
+    if(x_loc<0.4*canvasX) {
+      if(y_loc<0.4*canvasY) {
         return 'top left';
       }
-      else if(y>0.6*canvasY) {
+      else if(y_loc>0.6*canvasY) {
         return 'bottom left';
       }
       else {
         return 'mid left';
       }
     }
-    else if(x>0.6*canvasX) {
-      if(y<0.4*canvasY) {
+    else if(x_loc>0.6*canvasX) {
+      if(y_loc<0.4*canvasY) {
         return 'top right';
       }
-      else if(y>0.6*canvasY) {
+      else if(y_loc>0.6*canvasY) {
         return 'bottom right';
       }
       else {
@@ -145,10 +145,10 @@ var Interceptor = {
       }
     }
     else {
-      if(y<0.4*canvasY) {
+      if(y_loc<0.4*canvasY) {
         return 'top middle';
       }
-      else if(y>0.6*canvasY) {
+      else if(y_loc>0.6*canvasY) {
         return 'bottom middle';
       }
       else {
@@ -221,7 +221,7 @@ var Interceptor = {
     /* for 2D functions and text function */
     else if(!x.module.localeCompare('Shape') || !x.module.localeCompare('Typography') &&((!x.submodule)||(x.submodule.localeCompare('Attributes')!=0)) ){
       this.objectArea = this.getObjectArea(x.name, arguments);
-      var canvasLocation = this.canvasAreaLocation(arguments ,width,height);
+      var canvasLocation = this.canvasAreaLocation(x, arguments ,width,height);
       this.coordLoc = this.canvasLocator(x,arguments,width,height);
 
       /* in case of text, the description should be what is in the content */
@@ -247,10 +247,10 @@ var Interceptor = {
           arguments[i] = round(arguments[i]);
         }
         if(x.params[i].description.indexOf("x-coordinate")>-1) {
-          this.coordinates.push(arguments[i]+'x')
+            objectArray[objectCount]['co-ordinates'].push(arguments[i]+'x')
         }
         else if(x.params[i].description.indexOf("y-coordinate")>-1) {
-          this.coordinates.push(arguments[i]+'y')
+          objectArray[objectCount]['co-ordinates'].push(arguments[i]+'y')
         }
         else{
           objectArray[objectCount][x.params[i].description]=arguments[i];
@@ -319,6 +319,8 @@ var Interceptor = {
 
   /* helper function to populate object Details */
   populateObjectDetails : function(object1, object2, elementSummary, elementDetail) {
+    console.log(object1.objectArray);
+    console.log(object2.objectArray);
     this.prevTotalCount = this.totalCount;
     this.totalCount = object1.objectCount + object2.objectCount;
     elementSummary.innerHTML = '';
